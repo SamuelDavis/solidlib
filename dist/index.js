@@ -1,4 +1,4 @@
-import { template, spread, mergeProps as mergeProps$1, insert, createComponent, Portal, use, delegateEvents } from 'solid-js/web';
+import { template, spread, mergeProps as mergeProps$1, memo, insert, createComponent, Portal, use, delegateEvents } from 'solid-js/web';
 import { mergeProps, splitProps, onMount, onCleanup, createEffect } from 'solid-js';
 
 function assert(guard, value, ...args) {
@@ -51,24 +51,10 @@ function HTMLNumber(props) {
     money: false,
     precision: 2,
     fill: true,
-    classList: {},
     options: {},
     locales: "en-US"
   }, props);
-  const [local, parent] = splitProps(merged, ["highlight", "money", "precision", "options", "locales", "classList"]);
-  const getClassList = () => {
-    const {
-      money,
-      highlight,
-      value
-    } = merged;
-    return {
-      money,
-      positive: highlight && value > 0,
-      negative: highlight && value < 0,
-      ...local.classList
-    };
-  };
+  const [local, parent] = splitProps(merged, ["highlight", "money", "precision", "options", "locales"]);
   const getNumberFormatOptions = () => ({
     minimumFractionDigits: local.precision,
     maximumFractionDigits: local.precision,
@@ -78,8 +64,14 @@ function HTMLNumber(props) {
   return (() => {
     var _el$ = _tmpl$();
     spread(_el$, mergeProps$1({
-      get classList() {
-        return getClassList();
+      get ["data-money"]() {
+        return merged.money || undefined;
+      },
+      get ["data-positive"]() {
+        return memo(() => !!merged.highlight)() && merged.value > 0 || undefined;
+      },
+      get ["data-negative"]() {
+        return memo(() => !!merged.highlight)() && merged.value < 0 || undefined;
       }
     }, parent), false, true);
     insert(_el$, getText);

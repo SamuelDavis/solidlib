@@ -1,13 +1,7 @@
-import {
-  mergeProps,
-  onCleanup,
-  onMount,
-  splitProps,
-  ValidComponent,
-} from "solid-js";
+import { mergeProps, onCleanup, onMount, splitProps } from "solid-js";
 import { ExtendProps } from "./types";
 import { isFunction, isHtml } from "./guards";
-import { Dynamic, Portal } from "solid-js/web";
+import { Portal } from "solid-js/web";
 
 type HTMLNumberProps = ExtendProps<
   "span",
@@ -28,7 +22,6 @@ export function HTMLNumber(props: HTMLNumberProps) {
       money: false,
       precision: 2,
       fill: true,
-      classList: {},
       options: {},
       locales: "en-US",
     },
@@ -40,17 +33,7 @@ export function HTMLNumber(props: HTMLNumberProps) {
     "precision",
     "options",
     "locales",
-    "classList",
   ]);
-  const getClassList = (): NonNullable<HTMLNumberProps["classList"]> => {
-    const { money, highlight, value } = merged;
-    return {
-      money,
-      positive: highlight && value > 0,
-      negative: highlight && value < 0,
-      ...local.classList,
-    };
-  };
   const getNumberFormatOptions = (): Intl.NumberFormatOptions => ({
     minimumFractionDigits: local.precision,
     maximumFractionDigits: local.precision,
@@ -60,7 +43,12 @@ export function HTMLNumber(props: HTMLNumberProps) {
     merged.value.toLocaleString(local.locales, getNumberFormatOptions());
 
   return (
-    <span classList={getClassList()} {...parent}>
+    <span
+      data-money={merged.money || undefined}
+      data-positive={(merged.highlight && merged.value > 0) || undefined}
+      data-negative={(merged.highlight && merged.value < 0) || undefined}
+      {...parent}
+    >
       {getText()}
     </span>
   );
