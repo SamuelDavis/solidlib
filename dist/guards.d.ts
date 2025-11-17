@@ -4,6 +4,8 @@ export declare function isInstanceOf<V>(value: unknown, ctor: new (...args: any[
 export declare function isOf<T>(value: unknown, other: T[] | Record<string | number | symbol, T>): value is T;
 export declare function isIn<T extends string | number | symbol>(value: unknown, other: Record<T, any>): value is T;
 export declare function isFunction<T extends (...args: any[]) => any>(value: unknown | T): value is T;
+export declare function isHtml<T extends keyof HTMLElementTagNameMap>(value: unknown, tag: T): value is HTMLElementTagNameMap[T];
+export declare function isObject(value: unknown): value is object;
 export declare function isString(value: unknown): value is string;
 export declare function isBoolean(value: unknown): value is boolean;
 export declare function isArray<T = unknown>(value: T[] | unknown): value is T[];

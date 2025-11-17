@@ -38,6 +38,17 @@ export function isFunction<T extends (...args: any[]) => any>(
 ): value is T {
   return typeof value === "function";
 }
+export function isHtml<T extends keyof HTMLElementTagNameMap>(
+  value: unknown,
+  tag: T,
+): value is HTMLElementTagNameMap[T] {
+  return (
+    isObject(value) && "tagName" in value && value.tagName === tag.toUpperCase()
+  );
+}
+export function isObject(value: unknown): value is object {
+  return typeof value === "object";
+}
 export function isString(value: unknown): value is string {
   return typeof value === "string";
 }

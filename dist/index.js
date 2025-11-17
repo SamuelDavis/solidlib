@@ -1,5 +1,5 @@
-import { template, spread, mergeProps as mergeProps$1, insert } from 'solid-js/web';
-import { mergeProps, splitProps, createEffect } from 'solid-js';
+import { template, spread, mergeProps as mergeProps$1, insert, createComponent, Portal, use, delegateEvents } from 'solid-js/web';
+import { mergeProps, splitProps, onMount, onCleanup, createEffect } from 'solid-js';
 
 function assert(guard, value, ...args) {
   if (!guard(value, ...args)) throw new TypeError();
@@ -19,6 +19,12 @@ function isIn(value, other) {
 function isFunction(value) {
   return typeof value === "function";
 }
+function isHtml(value, tag) {
+  return isObject(value) && "tagName" in value && value.tagName === tag.toUpperCase();
+}
+function isObject(value) {
+  return typeof value === "object";
+}
 function isString(value) {
   return typeof value === "string";
 }
@@ -37,7 +43,8 @@ function isDate(value, cast = false) {
 }
 
 var _tmpl$ = /*#__PURE__*/template(`<span>`),
-  _tmpl$2 = /*#__PURE__*/template(`<i>`);
+  _tmpl$2 = /*#__PURE__*/template(`<i>`),
+  _tmpl$3 = /*#__PURE__*/template(`<dialog open>`);
 function HTMLNumber(props) {
   const merged = mergeProps({
     highlight: false,
@@ -117,6 +124,38 @@ function HTMLIcon(props) {
     return _el$3;
   })();
 }
+function Modal(props) {
+  const [local, parent] = splitProps(props, ["onClose", "onClick", "ref", "portal"]);
+  const onKeyDown = event => event.key === "Escape" && local.onClose?.(event);
+  onMount(() => window.addEventListener("keydown", onKeyDown));
+  onCleanup(() => window.removeEventListener("keydown", onKeyDown));
+  function onClick(event) {
+    if (event.target === local.ref) local.onClose?.(event);
+    if (isFunction(local.onClick) && isHtml(local.ref, "dialog")) local.onClick({
+      ...event,
+      currentTarget: local.ref,
+      target: local.ref
+    });
+  }
+  const Dialog = () => (() => {
+    var _el$4 = _tmpl$3();
+    var _ref$ = local.ref;
+    typeof _ref$ === "function" ? use(_ref$, _el$4) : local.ref = _el$4;
+    _el$4.$$click = onClick;
+    spread(_el$4, parent, false, true);
+    insert(_el$4, () => props.children);
+    return _el$4;
+  })();
+  return local.portal ? createComponent(Portal, {
+    get mount() {
+      return document.body;
+    },
+    get children() {
+      return createComponent(Dialog, {});
+    }
+  }) : createComponent(Dialog, {});
+}
+delegateEvents(["click"]);
 
 function persist(signal, opts) {
   const [get, set] = signal;
@@ -131,4 +170,4 @@ function persist(signal, opts) {
   return signal;
 }
 
-export { HTMLDate, HTMLIcon, HTMLNumber, assert, isArray, isBoolean, isDate, isFunction, isIn, isInstanceOf, isNonNullable, isNumber, isOf, isString, persist };
+export { HTMLDate, HTMLIcon, HTMLNumber, Modal, assert, isArray, isBoolean, isDate, isFunction, isHtml, isIn, isInstanceOf, isNonNullable, isNumber, isObject, isOf, isString, persist };

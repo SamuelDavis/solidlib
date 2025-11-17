@@ -19,6 +19,12 @@ export function isIn(value, other) {
 export function isFunction(value) {
     return typeof value === "function";
 }
+export function isHtml(value, tag) {
+    return (isObject(value) && "tagName" in value && value.tagName === tag.toUpperCase());
+}
+export function isObject(value) {
+    return typeof value === "object";
+}
 export function isString(value) {
     return typeof value === "string";
 }

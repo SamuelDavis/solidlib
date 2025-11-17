@@ -21,4 +21,9 @@ type HTMLIconProps = ExtendProps<"i", {
  * @see: https://fonts.googleapis.com/icon?family=Material+Icons
  */
 export declare function HTMLIcon(props: HTMLIconProps): import("solid-js").JSX.Element;
+type ModalProps = ExtendProps<"dialog", {
+    onClose?: (event: Event) => void;
+    portal?: boolean;
+}>;
+export declare function Modal(props: ModalProps): import("solid-js").JSX.Element;
 export {};

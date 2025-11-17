@@ -1,4 +1,6 @@
-import { mergeProps, splitProps } from "solid-js";
+import { mergeProps, onCleanup, onMount, splitProps, } from "solid-js";
+import { isFunction, isHtml } from "./guards";
+import { Portal } from "solid-js/web";
 export function HTMLNumber(props) {
     const merged = mergeProps({
         highlight: false,
@@ -60,4 +62,31 @@ export function HTMLIcon(props) {
     return (<i classList={getClassList()} {...parent}>
       {local.type}
     </i>);
+}
+export function Modal(props) {
+    const [local, parent] = splitProps(props, [
+        "onClose",
+        "onClick",
+        "ref",
+        "portal",
+    ]);
+    const onKeyDown = (event) => event.key === "Escape" && local.onClose?.(event);
+    onMount(() => window.addEventListener("keydown", onKeyDown));
+    onCleanup(() => window.removeEventListener("keydown", onKeyDown));
+    function onClick(event) {
+        if (event.target === local.ref)
+            local.onClose?.(event);
+        if (isFunction(local.onClick) && isHtml(local.ref, "dialog"))
+            local.onClick({
+                ...event,
+                currentTarget: local.ref,
+                target: local.ref,
+            });
+    }
+    const Dialog = () => (<dialog open onClick={onClick} ref={local.ref} {...parent}>
+      {props.children}
+    </dialog>);
+    return local.portal ? (<Portal mount={document.body}>
+      <Dialog />
+    </Portal>) : (<Dialog />);
 }
