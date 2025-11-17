@@ -1,4 +1,5 @@
 import type { ComponentProps, ValidComponent } from "solid-js";
+import { DOMElement } from "solid-js/jsx-runtime";
 
 export type AnyRecord<Value = any> = Record<symbol | string | number, Value>;
 export type { Signal, EffectFunction } from "solid-js";
@@ -8,6 +9,7 @@ export type Targeted<
   Ev extends Event = Event,
 > = Ev & {
   currentTarget: El;
+  target: DOMElement;
 };
 
 export type ExtendProps<
