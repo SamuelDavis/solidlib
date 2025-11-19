@@ -1,7 +1,17 @@
-import { mergeProps, onCleanup, onMount, splitProps } from "solid-js";
+import {
+  JSX,
+  JSXElement,
+  mergeProps,
+  onCleanup,
+  onMount,
+  ParentProps,
+  Show,
+  splitProps,
+  ValidComponent,
+} from "solid-js";
 import { ExtendProps } from "./types";
 import { isFunction, isHtml } from "./guards";
-import { Portal } from "solid-js/web";
+import { Dynamic, Portal } from "solid-js/web";
 
 type HTMLNumberProps = ExtendProps<
   "span",
@@ -100,17 +110,23 @@ export function HTMLIcon(props: HTMLIconProps) {
   );
 }
 
-type ModalProps = ExtendProps<
+type ModalProps<T> = ExtendProps<
   "dialog",
-  { onClose?: (event: Event) => void; portal?: boolean }
+  {
+    when?: T | undefined | null | false;
+    mount?: Node;
+    onClose?: (...args: any[]) => void | any;
+  }
 >;
 
-export function Modal(props: ModalProps) {
-  const [local, parent] = splitProps(props, [
+export function Modal<T>(props: ModalProps<T>) {
+  const merged = mergeProps({ when: true, mount: document.body }, props);
+  const [local, parent] = splitProps(merged, [
     "onClose",
     "onClick",
     "ref",
-    "portal",
+    "mount",
+    "when",
   ]);
 
   const onKeyDown = (event: KeyboardEvent) =>
@@ -128,17 +144,13 @@ export function Modal(props: ModalProps) {
       });
   }
 
-  const Dialog = () => (
-    <dialog open onClick={onClick} ref={local.ref} {...parent}>
-      {props.children}
-    </dialog>
-  );
-
-  return local.portal ? (
-    <Portal mount={document.body}>
-      <Dialog />
-    </Portal>
-  ) : (
-    <Dialog />
+  return (
+    <Show when={local.when}>
+      <Portal mount={local.mount}>
+        <dialog open onClick={onClick} ref={local.ref} {...parent}>
+          {props.children}
+        </dialog>
+      </Portal>
+    </Show>
   );
 }

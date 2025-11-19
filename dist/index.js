@@ -1,5 +1,5 @@
 import { template, spread, mergeProps as mergeProps$1, memo, insert, createComponent, Portal, use, delegateEvents } from 'solid-js/web';
-import { mergeProps, splitProps, onMount, onCleanup, createEffect } from 'solid-js';
+import { mergeProps, splitProps, onMount, onCleanup, Show, createEffect } from 'solid-js';
 
 function assert(guard, value, ...args) {
   if (!guard(value, ...args)) throw new TypeError();
@@ -117,7 +117,11 @@ function HTMLIcon(props) {
   })();
 }
 function Modal(props) {
-  const [local, parent] = splitProps(props, ["onClose", "onClick", "ref", "portal"]);
+  const merged = mergeProps({
+    when: true,
+    mount: document.body
+  }, props);
+  const [local, parent] = splitProps(merged, ["onClose", "onClick", "ref", "mount", "when"]);
   const onKeyDown = event => event.key === "Escape" && local.onClose?.(event);
   onMount(() => window.addEventListener("keydown", onKeyDown));
   onCleanup(() => window.removeEventListener("keydown", onKeyDown));
@@ -129,23 +133,27 @@ function Modal(props) {
       target: local.ref
     });
   }
-  const Dialog = () => (() => {
-    var _el$4 = _tmpl$3();
-    var _ref$ = local.ref;
-    typeof _ref$ === "function" ? use(_ref$, _el$4) : local.ref = _el$4;
-    _el$4.$$click = onClick;
-    spread(_el$4, parent, false, true);
-    insert(_el$4, () => props.children);
-    return _el$4;
-  })();
-  return local.portal ? createComponent(Portal, {
-    get mount() {
-      return document.body;
+  return createComponent(Show, {
+    get when() {
+      return local.when;
     },
     get children() {
-      return createComponent(Dialog, {});
+      return createComponent(Portal, {
+        get mount() {
+          return local.mount;
+        },
+        get children() {
+          var _el$4 = _tmpl$3();
+          var _ref$ = local.ref;
+          typeof _ref$ === "function" ? use(_ref$, _el$4) : local.ref = _el$4;
+          _el$4.$$click = onClick;
+          spread(_el$4, parent, false, true);
+          insert(_el$4, () => props.children);
+          return _el$4;
+        }
+      });
     }
-  }) : createComponent(Dialog, {});
+  });
 }
 delegateEvents(["click"]);
 
