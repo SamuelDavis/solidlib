@@ -42,19 +42,22 @@ export function HTMLNumber(props: HTMLNumberProps) {
   const getText = () =>
     merged.value.toLocaleString(local.locales, getNumberFormatOptions());
 
+  const getIsPositive = (): undefined | true => {
+    if (merged.highlight === "positive") return true;
+    if (merged.highlight === true && merged.value > 0) return true;
+    return undefined;
+  };
+  const getIsNegative = (): undefined | true => {
+    if (merged.highlight === "negative") return true;
+    if (merged.highlight === true && merged.value < 0) return true;
+    return undefined;
+  };
+
   return (
     <span
       data-money={merged.money || undefined}
-      data-positive={
-        merged.highlight === "positive" ||
-        (merged.highlight === true && merged.value > 0) ||
-        undefined
-      }
-      data-negative={
-        merged.highlight === "negative" ||
-        (merged.highlight === true && merged.value < 0) ||
-        undefined
-      }
+      data-positive={getIsPositive()}
+      data-negative={getIsNegative()}
       {...parent}
     >
       {getText()}

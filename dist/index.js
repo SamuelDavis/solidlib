@@ -61,6 +61,16 @@ function HTMLNumber(props) {
     ...local.options
   });
   const getText = () => merged.value.toLocaleString(local.locales, getNumberFormatOptions());
+  const getIsPositive = () => {
+    if (merged.highlight === "positive") return true;
+    if (merged.highlight === true && merged.value > 0) return true;
+    return undefined;
+  };
+  const getIsNegative = () => {
+    if (merged.highlight === "negative") return true;
+    if (merged.highlight === true && merged.value < 0) return true;
+    return undefined;
+  };
   return (() => {
     var _el$ = _tmpl$();
     spread(_el$, mergeProps$1({
@@ -68,10 +78,10 @@ function HTMLNumber(props) {
         return merged.money || undefined;
       },
       get ["data-positive"]() {
-        return merged.highlight === "positive" || merged.highlight === true && merged.value > 0 || undefined;
+        return getIsPositive();
       },
       get ["data-negative"]() {
-        return merged.highlight === "negative" || merged.highlight === true && merged.value < 0 || undefined;
+        return getIsNegative();
       }
     }, parent), false, true);
     insert(_el$, getText);
