@@ -1,4 +1,4 @@
-import { mergeProps, onCleanup, onMount, Show, splitProps, } from "solid-js";
+import { mergeProps, onCleanup, onMount, Show, splitProps } from "solid-js";
 import { isFunction, isHtml } from "./guards";
 import { Portal } from "solid-js/web";
 export function HTMLNumber(props) {
@@ -23,7 +23,11 @@ export function HTMLNumber(props) {
         ...local.options,
     });
     const getText = () => merged.value.toLocaleString(local.locales, getNumberFormatOptions());
-    return (<span data-money={merged.money || undefined} data-positive={(merged.highlight && merged.value > 0) || undefined} data-negative={(merged.highlight && merged.value < 0) || undefined} {...parent}>
+    return (<span data-money={merged.money || undefined} data-positive={merged.highlight === "positive" ||
+            (merged.highlight === true && merged.value > 0) ||
+            undefined} data-negative={merged.highlight === "negative" ||
+            (merged.highlight === true && merged.value < 0) ||
+            undefined} {...parent}>
       {getText()}
     </span>);
 }

@@ -1,4 +1,4 @@
-import { template, spread, mergeProps as mergeProps$1, memo, insert, createComponent, Portal, use, delegateEvents } from 'solid-js/web';
+import { template, spread, mergeProps as mergeProps$1, insert, createComponent, Portal, use, delegateEvents } from 'solid-js/web';
 import { mergeProps, splitProps, onMount, onCleanup, Show, createEffect } from 'solid-js';
 
 function assert(guard, value, ...args) {
@@ -68,10 +68,10 @@ function HTMLNumber(props) {
         return merged.money || undefined;
       },
       get ["data-positive"]() {
-        return memo(() => !!merged.highlight)() && merged.value > 0 || undefined;
+        return merged.highlight === "positive" || merged.highlight === true && merged.value > 0 || undefined;
       },
       get ["data-negative"]() {
-        return memo(() => !!merged.highlight)() && merged.value < 0 || undefined;
+        return merged.highlight === "negative" || merged.highlight === true && merged.value < 0 || undefined;
       }
     }, parent), false, true);
     insert(_el$, getText);

@@ -1,17 +1,7 @@
-import {
-  JSX,
-  JSXElement,
-  mergeProps,
-  onCleanup,
-  onMount,
-  ParentProps,
-  Show,
-  splitProps,
-  ValidComponent,
-} from "solid-js";
+import { mergeProps, onCleanup, onMount, Show, splitProps } from "solid-js";
 import { ExtendProps } from "./types";
 import { isFunction, isHtml } from "./guards";
-import { Dynamic, Portal } from "solid-js/web";
+import { Portal } from "solid-js/web";
 
 type HTMLNumberProps = ExtendProps<
   "span",
@@ -19,7 +9,7 @@ type HTMLNumberProps = ExtendProps<
     value: number;
     money?: boolean;
     precision?: number;
-    highlight?: boolean;
+    highlight?: boolean | "positive" | "negative";
     options?: Intl.NumberFormatOptions;
     locale?: Intl.LocalesArgument;
   }
@@ -55,8 +45,16 @@ export function HTMLNumber(props: HTMLNumberProps) {
   return (
     <span
       data-money={merged.money || undefined}
-      data-positive={(merged.highlight && merged.value > 0) || undefined}
-      data-negative={(merged.highlight && merged.value < 0) || undefined}
+      data-positive={
+        merged.highlight === "positive" ||
+        (merged.highlight === true && merged.value > 0) ||
+        undefined
+      }
+      data-negative={
+        merged.highlight === "negative" ||
+        (merged.highlight === true && merged.value < 0) ||
+        undefined
+      }
       {...parent}
     >
       {getText()}
