@@ -1,7 +1,7 @@
 export declare function assert<T, Args extends any[]>(guard: (value: unknown, ...args: Args) => value is T, value: unknown, ...args: Args): asserts value is T;
 export declare function isNonNullable<T>(value: T): value is NonNullable<T>;
 export declare function isInstanceOf<V>(value: unknown, ctor: new (...args: any[]) => V): value is V;
-export declare function isOf<T>(value: unknown, other: readonly [] | T[] | Record<string | number | symbol, T>): value is T;
+export declare function isOf<T>(value: unknown, other: readonly T[] | Record<string | number | symbol, T>): value is T;
 export declare function isIn<T extends string | number | symbol>(value: unknown, other: Record<T, any>): value is T;
 export declare function isFunction<T extends (...args: any[]) => any>(value: unknown | T): value is T;
 export declare function isHtml<T extends keyof HTMLElementTagNameMap>(value: unknown, tag: T): value is HTMLElementTagNameMap[T];

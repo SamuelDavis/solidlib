@@ -19,7 +19,7 @@ export function isInstanceOf<V>(
 
 export function isOf<T>(
   value: unknown,
-  other: readonly [] | T[] | Record<string | number | symbol, T>,
+  other: readonly T[] | Record<string | number | symbol, T>,
 ): value is T {
   return Array.isArray(other)
     ? other.includes(value as any)
