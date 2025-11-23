@@ -175,13 +175,6 @@ function persist(signal, opts) {
     decode = JSON.parse
   } = opts;
   const item = localStorage.getItem(key);
-  if (isString(item)) {
-    if ("setter" in set) {
-      console.debug(set);
-    } else {
-      console.debug(set);
-    }
-  }
   if (isString(item)) set(decode(item));
   createEffect(() => {
     const value = isFunction(get) ? get() : get;
