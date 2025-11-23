@@ -167,20 +167,22 @@ function Modal(props) {
 }
 delegateEvents(["click"]);
 
-function persist(signal, opts) {
-  const [get, set] = signal;
+function persist(mut, opts) {
+  const [get, set] = mut;
+  // TODO: Signal and SetStoreFunction have no overlap
+  const setter = set;
   const {
     key,
     encode = JSON.stringify,
     decode = JSON.parse
   } = opts;
   const item = localStorage.getItem(key);
-  if (isString(item)) set(decode(item));
+  if (isString(item)) setter(() => decode(item));
   createEffect(() => {
     const value = isFunction(get) ? get() : get;
     return localStorage.setItem(key, encode(value));
   });
-  return signal;
+  return mut;
 }
 
 export { HTMLDate, HTMLIcon, HTMLNumber, Modal, assert, isArray, isBoolean, isDate, isFunction, isHtml, isIn, isInstanceOf, isNonNullable, isNumber, isObject, isOf, isString, persist };
