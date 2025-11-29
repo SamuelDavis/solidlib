@@ -184,5 +184,17 @@ function persist(mut, opts) {
   });
   return mut;
 }
+function onInput(set, key, mut) {
+  return event => {
+    const value = mut(event.currentTarget.value, event);
+    // @ts-ignore
+    // Each member of the union type 'Setter<T> | SetStoreFunction<T>' has signatures,
+    // but none of those signatures are compatible with each other. [2349]
+    set(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+}
 
-export { HTMLDate, HTMLIcon, HTMLNumber, Modal, assert, isArray, isBoolean, isDate, isFunction, isHtml, isIn, isInstanceOf, isNonNullable, isNumber, isObject, isOf, isString, persist };
+export { HTMLDate, HTMLIcon, HTMLNumber, Modal, assert, isArray, isBoolean, isDate, isFunction, isHtml, isIn, isInstanceOf, isNonNullable, isNumber, isObject, isOf, isString, onInput, persist };
