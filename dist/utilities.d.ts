@@ -14,4 +14,5 @@ export declare function onInput<T extends AnyRecord, K extends keyof T, E extend
         value: string;
     };
 }>(set: Setter<T> | SetStoreFunction<T>, key: K, mut: (value: E["currentTarget"]["value"], event: E) => T[K]): (event: E) => void;
+export declare function preventDefault(event: Event): void;
 export {};

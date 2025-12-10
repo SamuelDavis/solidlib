@@ -23,3 +23,6 @@ export function onInput(set, key, mut) {
         set((prev) => ({ ...prev, [key]: value }));
     };
 }
+export function preventDefault(event) {
+    event.preventDefault();
+}

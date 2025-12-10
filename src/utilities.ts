@@ -45,3 +45,7 @@ export function onInput<
     set((prev) => ({ ...prev, [key]: value }));
   };
 }
+
+export function preventDefault(event: Event) {
+  event.preventDefault();
+}

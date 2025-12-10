@@ -196,5 +196,8 @@ function onInput(set, key, mut) {
     }));
   };
 }
+function preventDefault(event) {
+  event.preventDefault();
+}
 
-export { HTMLDate, HTMLIcon, HTMLNumber, Modal, assert, isArray, isBoolean, isDate, isFunction, isHtml, isIn, isInstanceOf, isNonNullable, isNumber, isObject, isOf, isString, onInput, persist };
+export { HTMLDate, HTMLIcon, HTMLNumber, Modal, assert, isArray, isBoolean, isDate, isFunction, isHtml, isIn, isInstanceOf, isNonNullable, isNumber, isObject, isOf, isString, onInput, persist, preventDefault };
