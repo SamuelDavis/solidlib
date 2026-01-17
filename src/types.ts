@@ -15,5 +15,5 @@ export type Targeted<
 export type ExtendProps<
   Source extends ValidComponent,
   Extension extends AnyRecord = {},
-  Ignore extends keyof Source = never,
+  Ignore extends keyof ComponentProps<Source> = never,
 > = Omit<ComponentProps<Source>, keyof Extension | Ignore> & Extension;
