@@ -8,11 +8,11 @@ type HTMLNumberProps = ExtendProps<"span", {
     locale?: Intl.LocalesArgument;
 }>;
 export declare function HTMLNumber(props: HTMLNumberProps): import("solid-js").JSX.Element;
-type HTMLDateProps = ExtendProps<"span", {
+type HTMLDateProps = ExtendProps<"time", {
     value: Date;
     locales?: Intl.LocalesArgument;
     options?: Intl.DateTimeFormatOptions;
-}>;
+}, "datetime">;
 export declare function HTMLDate(props: HTMLDateProps): import("solid-js").JSX.Element;
 type HTMLIconProps = ExtendProps<"i", {
     type: string;

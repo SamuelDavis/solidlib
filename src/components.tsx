@@ -66,21 +66,22 @@ export function HTMLNumber(props: HTMLNumberProps) {
 }
 
 type HTMLDateProps = ExtendProps<
-  "span",
+  "time",
   {
     value: Date;
     locales?: Intl.LocalesArgument;
     options?: Intl.DateTimeFormatOptions;
-  }
+  },
+  "datetime"
 >;
 
 export function HTMLDate(props: HTMLDateProps) {
   const merged = mergeProps({ options: {}, locales: "en-US" }, props);
   const [local, parent] = splitProps(merged, ["value", "options", "locales"]);
   return (
-    <span {...parent}>
+    <time datetime={local.value.toUTCString()} {...parent}>
       {local.value.toLocaleDateString(local.locales, local.options)}
-    </span>
+    </time>
   );
 }
 

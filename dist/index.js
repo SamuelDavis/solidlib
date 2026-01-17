@@ -43,8 +43,9 @@ function isDate(value, cast = false) {
 }
 
 var _tmpl$ = /*#__PURE__*/template(`<span>`),
-  _tmpl$2 = /*#__PURE__*/template(`<i>`),
-  _tmpl$3 = /*#__PURE__*/template(`<dialog open>`);
+  _tmpl$2 = /*#__PURE__*/template(`<time>`),
+  _tmpl$3 = /*#__PURE__*/template(`<i>`),
+  _tmpl$4 = /*#__PURE__*/template(`<dialog open>`);
 function HTMLNumber(props) {
   const merged = mergeProps({
     highlight: false,
@@ -95,8 +96,12 @@ function HTMLDate(props) {
   }, props);
   const [local, parent] = splitProps(merged, ["value", "options", "locales"]);
   return (() => {
-    var _el$2 = _tmpl$();
-    spread(_el$2, parent, false, true);
+    var _el$2 = _tmpl$2();
+    spread(_el$2, mergeProps$1({
+      get datetime() {
+        return local.value.toUTCString();
+      }
+    }, parent), false, true);
     insert(_el$2, () => local.value.toLocaleDateString(local.locales, local.options));
     return _el$2;
   })();
@@ -116,7 +121,7 @@ function HTMLIcon(props) {
     ...local.classList
   });
   return (() => {
-    var _el$3 = _tmpl$2();
+    var _el$3 = _tmpl$3();
     spread(_el$3, mergeProps$1({
       get classList() {
         return getClassList();
@@ -153,7 +158,7 @@ function Modal(props) {
           return local.mount;
         },
         get children() {
-          var _el$4 = _tmpl$3();
+          var _el$4 = _tmpl$4();
           var _ref$ = local.ref;
           typeof _ref$ === "function" ? use(_ref$, _el$4) : local.ref = _el$4;
           _el$4.$$click = onClick;

@@ -44,9 +44,9 @@ export function HTMLNumber(props) {
 export function HTMLDate(props) {
     const merged = mergeProps({ options: {}, locales: "en-US" }, props);
     const [local, parent] = splitProps(merged, ["value", "options", "locales"]);
-    return (<span {...parent}>
+    return (<time datetime={local.value.toUTCString()} {...parent}>
       {local.value.toLocaleDateString(local.locales, local.options)}
-    </span>);
+    </time>);
 }
 /**
  * @see: https://fonts.googleapis.com/icon?family=Material+Icons
