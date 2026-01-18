@@ -55,7 +55,7 @@ export function isString(value: unknown): value is string {
 export function isBoolean(value: unknown): value is boolean {
   return value === true || value === false;
 }
-export function isArray<T = unknown>(value: T[] | unknown): value is T[] {
+export function isArray<T>(value: T): value is Extract<T, readonly unknown[]> {
   return Array.isArray(value);
 }
 export function isNumber(value: unknown): value is number {

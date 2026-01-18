@@ -8,6 +8,6 @@ export declare function isHtml<T extends keyof HTMLElementTagNameMap>(value: unk
 export declare function isObject(value: unknown): value is object;
 export declare function isString(value: unknown): value is string;
 export declare function isBoolean(value: unknown): value is boolean;
-export declare function isArray<T = unknown>(value: T[] | unknown): value is T[];
+export declare function isArray<T>(value: T): value is Extract<T, readonly unknown[]>;
 export declare function isNumber(value: unknown): value is number;
 export declare function isDate(value: unknown, cast?: boolean): value is Date;
