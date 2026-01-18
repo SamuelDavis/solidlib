@@ -1,5 +1,5 @@
 import { template, spread, mergeProps as mergeProps$1, insert, createComponent, Portal, use, delegateEvents } from 'solid-js/web';
-import { mergeProps, splitProps, onMount, onCleanup, Show, createEffect } from 'solid-js';
+import { mergeProps, splitProps, Show, onMount, onCleanup, createEffect } from 'solid-js';
 
 function assert(guard, value, ...args) {
   if (!guard(value, ...args)) throw new TypeError();
@@ -94,7 +94,7 @@ function HTMLDate(props) {
     options: {},
     locales: "en-US"
   }, props);
-  const [local, parent] = splitProps(merged, ["value", "options", "locales"]);
+  const [local, parent] = splitProps(merged, ["children", "value", "options", "locales"]);
   return (() => {
     var _el$2 = _tmpl$2();
     spread(_el$2, mergeProps$1({
@@ -102,7 +102,15 @@ function HTMLDate(props) {
         return local.value.toUTCString();
       }
     }, parent), false, true);
-    insert(_el$2, () => local.value.toLocaleDateString(local.locales, local.options));
+    insert(_el$2, createComponent(Show, {
+      get when() {
+        return local.children;
+      },
+      get fallback() {
+        return local.value.toLocaleDateString(local.locales, local.options);
+      },
+      children: children => children()
+    }));
     return _el$2;
   })();
 }

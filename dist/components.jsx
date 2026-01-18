@@ -43,9 +43,16 @@ export function HTMLNumber(props) {
 }
 export function HTMLDate(props) {
     const merged = mergeProps({ options: {}, locales: "en-US" }, props);
-    const [local, parent] = splitProps(merged, ["value", "options", "locales"]);
+    const [local, parent] = splitProps(merged, [
+        "children",
+        "value",
+        "options",
+        "locales",
+    ]);
     return (<time datetime={local.value.toUTCString()} {...parent}>
-      {local.value.toLocaleDateString(local.locales, local.options)}
+      <Show when={local.children} fallback={local.value.toLocaleDateString(local.locales, local.options)}>
+        {(children) => children()}
+      </Show>
     </time>);
 }
 /**
