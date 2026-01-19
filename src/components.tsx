@@ -95,28 +95,32 @@ export function HTMLDate(props: HTMLDateProps) {
   );
 }
 
-type HTMLIconProps = ExtendProps<"i", { type: string }>;
+type HTMLIconProps = ExtendProps<
+  "i",
+  { type: string; variant?: "icon" | "symbol" }
+>;
 
 /**
- * @see: https://fonts.googleapis.com/icon?family=Material+Icons
+ * @link https://fonts.google.com/icons?icon.set=Material+Symbols
+ * @example <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbol" />
  */
 export function HTMLIcon(props: HTMLIconProps) {
-  props = mergeProps(
+  const merged = mergeProps(
     {
       role: props.onClick ? ("button" as const) : undefined,
       title: props.type,
+      variant: "symbol",
       classList: {},
     },
     props,
   );
-  const [local, parent] = splitProps(props, ["type", "classList"]);
-  const getClassList = (): NonNullable<HTMLIconProps["classList"]> => ({
-    "material-icons": true,
-    ...local.classList,
-  });
+  const [local, parent] = splitProps(merged, ["type", "variant", "class"]);
+  const getVariantClass = () => `material-${local.variant}s`;
+  const getClass = (): NonNullable<HTMLIconProps["class"]> =>
+    `${getVariantClass()} ${local.class}`.trimEnd();
 
   return (
-    <i classList={getClassList()} {...parent}>
+    <i class={getClass()} {...parent}>
       {local.type}
     </i>
   );

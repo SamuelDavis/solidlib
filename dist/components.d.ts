@@ -16,9 +16,11 @@ type HTMLDateProps = ExtendProps<"time", {
 export declare function HTMLDate(props: HTMLDateProps): import("solid-js").JSX.Element;
 type HTMLIconProps = ExtendProps<"i", {
     type: string;
+    variant?: "icon" | "symbol";
 }>;
 /**
- * @see: https://fonts.googleapis.com/icon?family=Material+Icons
+ * @link https://fonts.google.com/icons?icon.set=Material+Symbols
+ * @example <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbol" />
  */
 export declare function HTMLIcon(props: HTMLIconProps): import("solid-js").JSX.Element;
 type ModalProps<T> = ExtendProps<"dialog", {

@@ -56,20 +56,20 @@ export function HTMLDate(props) {
     </time>);
 }
 /**
- * @see: https://fonts.googleapis.com/icon?family=Material+Icons
+ * @link https://fonts.google.com/icons?icon.set=Material+Symbols
+ * @example <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbol" />
  */
 export function HTMLIcon(props) {
-    props = mergeProps({
+    const merged = mergeProps({
         role: props.onClick ? "button" : undefined,
         title: props.type,
+        variant: "symbol",
         classList: {},
     }, props);
-    const [local, parent] = splitProps(props, ["type", "classList"]);
-    const getClassList = () => ({
-        "material-icons": true,
-        ...local.classList,
-    });
-    return (<i classList={getClassList()} {...parent}>
+    const [local, parent] = splitProps(merged, ["type", "variant", "class"]);
+    const getVariantClass = () => `material-${local.variant}s`;
+    const getClass = () => `${getVariantClass()} ${local.class}`.trimEnd();
+    return (<i class={getClass()} {...parent}>
       {local.type}
     </i>);
 }

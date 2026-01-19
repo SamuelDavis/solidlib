@@ -115,24 +115,24 @@ function HTMLDate(props) {
   })();
 }
 /**
- * @see: https://fonts.googleapis.com/icon?family=Material+Icons
+ * @link https://fonts.google.com/icons?icon.set=Material+Symbols
+ * @example <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbol" />
  */
 function HTMLIcon(props) {
-  props = mergeProps({
+  const merged = mergeProps({
     role: props.onClick ? "button" : undefined,
     title: props.type,
+    variant: "symbol",
     classList: {}
   }, props);
-  const [local, parent] = splitProps(props, ["type", "classList"]);
-  const getClassList = () => ({
-    "material-icons": true,
-    ...local.classList
-  });
+  const [local, parent] = splitProps(merged, ["type", "variant", "class"]);
+  const getVariantClass = () => `material-${local.variant}s`;
+  const getClass = () => `${getVariantClass()} ${local.class}`.trimEnd();
   return (() => {
     var _el$3 = _tmpl$3();
     spread(_el$3, mergeProps$1({
-      get classList() {
-        return getClassList();
+      get ["class"]() {
+        return getClass();
       }
     }, parent), false, true);
     insert(_el$3, () => local.type);
