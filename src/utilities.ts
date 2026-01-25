@@ -1,7 +1,7 @@
 import { createEffect, type Setter, type Signal } from "solid-js";
-import { isFunction, isString } from "./guards";
+import { isFunction, isKeyed, isString } from "./guards";
 import { SetStoreFunction } from "solid-js/store";
-import { AnyRecord } from "./types";
+import { AnyRecord, KeyOfUnion } from "./types";
 
 type Store<T> = [T, SetStoreFunction<T>];
 type PersistOpts<T> = {
@@ -48,4 +48,11 @@ export function onInput<
 
 export function preventDefault(event: Event) {
   event.preventDefault();
+}
+
+export function extract<T, K extends PropertyKey & KeyOfUnion<T>>(
+  value: T,
+  key: K,
+): undefined | Extract<T, Record<K, unknown>> {
+  return isKeyed(value, key) ? value : undefined;
 }

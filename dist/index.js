@@ -16,6 +16,9 @@ function isOf(value, other) {
 function isIn(value, other) {
   return value in other;
 }
+function isKeyed(value, key) {
+  return isObject(value) && isIn(key, value);
+}
 function isFunction(value) {
   return typeof value === "function";
 }
@@ -212,5 +215,8 @@ function onInput(set, key, mut) {
 function preventDefault(event) {
   event.preventDefault();
 }
+function extract(value, key) {
+  return isKeyed(value, key) ? value : undefined;
+}
 
-export { HTMLDate, HTMLIcon, HTMLNumber, Modal, assert, isArray, isBoolean, isDate, isFunction, isHtml, isIn, isInstanceOf, isNonNullable, isNumber, isObject, isOf, isString, onInput, persist, preventDefault };
+export { HTMLDate, HTMLIcon, HTMLNumber, Modal, assert, extract, isArray, isBoolean, isDate, isFunction, isHtml, isIn, isInstanceOf, isKeyed, isNonNullable, isNumber, isObject, isOf, isString, onInput, persist, preventDefault };

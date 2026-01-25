@@ -19,18 +19,25 @@ export function isInstanceOf<V>(
 
 export function isOf<T>(
   value: unknown,
-  other: readonly T[] | Record<string | number | symbol, T>,
+  other: readonly T[] | Record<PropertyKey, T>,
 ): value is T {
   return Array.isArray(other)
     ? other.includes(value as any)
     : Object.values(other).includes(value as any);
 }
 
-export function isIn<T extends string | number | symbol>(
+export function isIn<T extends PropertyKey>(
   value: unknown,
   other: Record<T, any>,
 ): value is T {
   return (value as any) in other;
+}
+
+export function isKeyed<K extends PropertyKey, T = unknown>(
+  value: T,
+  key: K,
+): value is Extract<T, Record<K, unknown>> {
+  return isObject(value) && isIn(key, value);
 }
 
 export function isFunction<T extends (...args: any[]) => any>(

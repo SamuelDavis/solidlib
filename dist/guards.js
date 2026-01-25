@@ -16,6 +16,9 @@ export function isOf(value, other) {
 export function isIn(value, other) {
     return value in other;
 }
+export function isKeyed(value, key) {
+    return isObject(value) && isIn(key, value);
+}
 export function isFunction(value) {
     return typeof value === "function";
 }

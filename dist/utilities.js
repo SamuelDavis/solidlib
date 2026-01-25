@@ -1,5 +1,5 @@
 import { createEffect } from "solid-js";
-import { isFunction, isString } from "./guards";
+import { isFunction, isKeyed, isString } from "./guards";
 export function persist(mut, opts) {
     const [get, set] = mut;
     // TODO: Signal and SetStoreFunction have no overlap
@@ -25,4 +25,7 @@ export function onInput(set, key, mut) {
 }
 export function preventDefault(event) {
     event.preventDefault();
+}
+export function extract(value, key) {
+    return isKeyed(value, key) ? value : undefined;
 }

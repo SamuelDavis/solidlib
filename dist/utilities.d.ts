@@ -1,6 +1,6 @@
 import { type Setter, type Signal } from "solid-js";
 import { SetStoreFunction } from "solid-js/store";
-import { AnyRecord } from "./types";
+import { AnyRecord, KeyOfUnion } from "./types";
 type Store<T> = [T, SetStoreFunction<T>];
 type PersistOpts<T> = {
     key: string;
@@ -15,4 +15,5 @@ export declare function onInput<T extends AnyRecord, K extends keyof T, E extend
     };
 }>(set: Setter<T> | SetStoreFunction<T>, key: K, mut: (value: E["currentTarget"]["value"], event: E) => T[K]): (event: E) => void;
 export declare function preventDefault(event: Event): void;
+export declare function extract<T, K extends PropertyKey & KeyOfUnion<T>>(value: T, key: K): undefined | Extract<T, Record<K, unknown>>;
 export {};
