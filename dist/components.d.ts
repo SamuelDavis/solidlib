@@ -19,8 +19,8 @@ type HTMLIconProps = ExtendProps<"i", {
     variant?: "icon" | "symbol";
 }>;
 /**
- * @link https://fonts.google.com/icons?icon.set=Material+Symbols
- * @example <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbol" />
+ * @link https://fonts.google.com/icons
+ * @example <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols" />
  */
 export declare function HTMLIcon(props: HTMLIconProps): import("solid-js").JSX.Element;
 type ModalProps<T> = ExtendProps<"dialog", {

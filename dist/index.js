@@ -118,14 +118,15 @@ function HTMLDate(props) {
   })();
 }
 /**
- * @link https://fonts.google.com/icons?icon.set=Material+Symbols
- * @example <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbol" />
+ * @link https://fonts.google.com/icons
+ * @example <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols" />
  */
 function HTMLIcon(props) {
   const merged = mergeProps({
     role: props.onClick ? "button" : undefined,
     title: props.type,
     variant: "symbol",
+    class: '',
     classList: {}
   }, props);
   const [local, parent] = splitProps(merged, ["type", "variant", "class"]);
