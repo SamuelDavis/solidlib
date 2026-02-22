@@ -1,4 +1,4 @@
-import { template, spread, mergeProps as mergeProps$1, insert, createComponent, Portal, use, delegateEvents } from 'solid-js/web';
+import { spread, mergeProps as mergeProps$1, insert, createComponent, Portal, use, template, delegateEvents } from 'solid-js/web';
 import { mergeProps, splitProps, Show, onMount, onCleanup, createEffect } from 'solid-js';
 
 function assert(guard, value, ...args) {
