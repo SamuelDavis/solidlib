@@ -24,7 +24,7 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "clean": "rm --recursive --force dist",
+    "clean": "rm -rf dist",
     "build": "tsc && rollup -c",
     "prepublishOnly": "npm run build",
     "test": "vitest run && npm run test:types",
