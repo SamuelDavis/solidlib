@@ -11,7 +11,7 @@ type HTMLNumberProps = ExtendProps<
     precision?: number;
     highlight?: boolean | "positive" | "negative";
     options?: Intl.NumberFormatOptions;
-    locale?: Intl.LocalesArgument;
+    locales?: Intl.LocalesArgument;
   }
 >;
 
@@ -84,7 +84,7 @@ export function HTMLDate(props: HTMLDateProps) {
     "locales",
   ]);
   return (
-    <time datetime={local.value.toUTCString()} {...parent}>
+    <time datetime={local.value.toISOString()} {...parent}>
       <Show
         when={local.children}
         fallback={local.value.toLocaleDateString(local.locales, local.options)}
@@ -110,7 +110,7 @@ export function HTMLIcon(props: HTMLIconProps) {
       role: props.onClick ? ("button" as const) : undefined,
       title: props.type,
       variant: "symbol",
-      class: '',
+      class: "",
       classList: {},
     },
     props,
