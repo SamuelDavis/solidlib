@@ -26,7 +26,7 @@ function isHtml(value, tag) {
   return isObject(value) && "tagName" in value && value.tagName === tag.toUpperCase();
 }
 function isObject(value) {
-  return typeof value === "object";
+  return typeof value === "object" && value !== null;
 }
 function isString(value) {
   return typeof value === "string";
@@ -40,8 +40,7 @@ function isArray(value) {
 function isNumber(value) {
   return typeof value === "number" && !Number.isNaN(value);
 }
-function isDate(value, cast = false) {
-  value = cast ? new Date(value) : value;
+function isDate(value) {
   return value instanceof Date && isNumber(value.getTime());
 }
 
@@ -102,7 +101,7 @@ function HTMLDate(props) {
     var _el$2 = _tmpl$2();
     spread(_el$2, mergeProps$1({
       get datetime() {
-        return local.value.toUTCString();
+        return local.value.toISOString();
       }
     }, parent), false, true);
     insert(_el$2, createComponent(Show, {
@@ -126,7 +125,7 @@ function HTMLIcon(props) {
     role: props.onClick ? "button" : undefined,
     title: props.type,
     variant: "symbol",
-    class: '',
+    class: "",
     classList: {}
   }, props);
   const [local, parent] = splitProps(merged, ["type", "variant", "class"]);
@@ -191,10 +190,20 @@ function persist(mut, opts) {
   const {
     key,
     encode = JSON.stringify,
-    decode = JSON.parse
+    decode = JSON.parse,
+    onError = console.error
   } = opts;
   const item = localStorage.getItem(key);
-  if (isString(item)) setter(() => decode(item));
+  try {
+    if (isString(item)) setter(() => decode(item));
+  } catch (e) {
+    assert(isInstanceOf, e, Error);
+    onError(new Error(e.message, {
+      cause: item
+    }));
+    const value = isFunction(get) ? get() : get;
+    localStorage.setItem(key, encode(value));
+  }
   createEffect(() => {
     const value = isFunction(get) ? get() : get;
     return localStorage.setItem(key, encode(value));
@@ -204,7 +213,7 @@ function persist(mut, opts) {
 function onInput(set, key, mut) {
   return event => {
     const value = mut(event.currentTarget.value, event);
-    // @ts-ignore
+    // @ts-expect-error
     // Each member of the union type 'Setter<T> | SetStoreFunction<T>' has signatures,
     // but none of those signatures are compatible with each other. [2349]
     set(prev => ({
@@ -213,8 +222,11 @@ function onInput(set, key, mut) {
     }));
   };
 }
-function preventDefault(event) {
-  event.preventDefault();
+function preventDefault(input) {
+  if (isInstanceOf(input, Event)) input.preventDefault();else return event => {
+    preventDefault(event);
+    return input(event);
+  };
 }
 function extract(value, key) {
   return isKeyed(value, key) ? value : undefined;

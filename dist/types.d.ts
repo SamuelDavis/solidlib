@@ -7,4 +7,4 @@ export type Targeted<El extends Element = HTMLElement, Ev extends Event = Event>
     currentTarget: El;
     target: DOMElement;
 };
-export type ExtendProps<Source extends ValidComponent, Extension extends AnyRecord = {}, Ignore extends keyof ComponentProps<Source> = never> = Omit<ComponentProps<Source>, keyof Extension | Ignore> & Extension;
+export type ExtendProps<Source extends ValidComponent, Extension extends AnyRecord = Record<never, never>, Ignore extends keyof ComponentProps<Source> = never> = Omit<ComponentProps<Source>, keyof Extension | Ignore> & Extension;

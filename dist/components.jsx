@@ -49,7 +49,7 @@ export function HTMLDate(props) {
         "options",
         "locales",
     ]);
-    return (<time datetime={local.value.toUTCString()} {...parent}>
+    return (<time datetime={local.value.toISOString()} {...parent}>
       <Show when={local.children} fallback={local.value.toLocaleDateString(local.locales, local.options)}>
         {(children) => children()}
       </Show>
@@ -64,7 +64,7 @@ export function HTMLIcon(props) {
         role: props.onClick ? "button" : undefined,
         title: props.type,
         variant: "symbol",
-        class: '',
+        class: "",
         classList: {},
     }, props);
     const [local, parent] = splitProps(merged, ["type", "variant", "class"]);

@@ -2,13 +2,13 @@ export declare function assert<T, Args extends any[]>(guard: (value: unknown, ..
 export declare function isNonNullable<T>(value: T): value is NonNullable<T>;
 export declare function isInstanceOf<V>(value: unknown, ctor: new (...args: any[]) => V): value is V;
 export declare function isOf<T>(value: unknown, other: readonly T[] | Record<PropertyKey, T>): value is T;
-export declare function isIn<T extends PropertyKey>(value: unknown, other: Record<T, any>): value is T;
+export declare function isIn<T extends PropertyKey>(value: unknown, other: Record<T, unknown>): value is T;
 export declare function isKeyed<K extends PropertyKey, T = unknown>(value: T, key: K): value is Extract<T, Record<K, unknown>>;
-export declare function isFunction<T extends (...args: any[]) => any>(value: unknown | T): value is T;
+export declare function isFunction<T extends (...args: any[]) => any>(value: unknown): value is T;
 export declare function isHtml<T extends keyof HTMLElementTagNameMap>(value: unknown, tag: T): value is HTMLElementTagNameMap[T];
 export declare function isObject(value: unknown): value is object;
 export declare function isString(value: unknown): value is string;
 export declare function isBoolean(value: unknown): value is boolean;
 export declare function isArray<T>(value: T): value is Extract<T, readonly unknown[]>;
 export declare function isNumber(value: unknown): value is number;
-export declare function isDate(value: unknown, cast?: boolean): value is Date;
+export declare function isDate(value: unknown): value is Date;

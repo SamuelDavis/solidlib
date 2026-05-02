@@ -26,7 +26,7 @@ export function isHtml(value, tag) {
     return (isObject(value) && "tagName" in value && value.tagName === tag.toUpperCase());
 }
 export function isObject(value) {
-    return typeof value === "object";
+    return typeof value === "object" && value !== null;
 }
 export function isString(value) {
     return typeof value === "string";
@@ -40,7 +40,6 @@ export function isArray(value) {
 export function isNumber(value) {
     return typeof value === "number" && !Number.isNaN(value);
 }
-export function isDate(value, cast = false) {
-    value = cast ? new Date(value) : value;
+export function isDate(value) {
     return value instanceof Date && isNumber(value.getTime());
 }

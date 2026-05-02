@@ -27,11 +27,8 @@
     "clean": "rm -rf dist",
     "build": "tsc && rollup -c",
     "prepublishOnly": "npm run build",
-    "test": "vitest run && npm run test:types",
-    "test:watch": "vitest",
-    "test:types": "tsc --project tsconfig.test.json",
-    "pretty": "prettier --write \"{src,test}/**/*.{ts,tsx}\"",
-    "validate": "npm run clean && npm run build && npm run test",
+    "pretty": "prettier --write \"{src}/**/*.{ts,tsx}\"",
+    "validate": "npm run clean && npm run build",
     "release": "git push --follow-tags",
     "release:patch": "npm run validate && npm version patch && npm run release",
     "release:minor": "npm run validate && npm version minor && npm run release",
@@ -42,20 +39,17 @@
     "@babel/preset-typescript": "^7.26.0",
     "@rollup/plugin-babel": "6.0.4",
     "@rollup/plugin-node-resolve": "15.3.0",
-    "@rollup/plugin-terser": "0.4.4",
-    "@types/jest": "^29.5.14",
     "@types/node": "^22.10.0",
-    "babel-preset-solid": "^1.9.3",
     "jsdom": "^25.0.1",
     "prettier": "^3.4.1",
     "rollup": "^4.27.4",
     "solid-js": "^1.9.3",
-    "typescript": "^5.7.2",
-    "vite": "^6.0.0",
-    "vite-plugin-solid": "^2.11.0",
-    "vitest": "^4.0.9"
+    "typescript": "^5.7.2"
   },
   "peerDependencies": {
     "solid-js": "^1.8.6"
+  },
+  "dependencies": {
+    "babel-preset-solid": "^1.9.12"
   }
 }

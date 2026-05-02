@@ -5,7 +5,7 @@ type HTMLNumberProps = ExtendProps<"span", {
     precision?: number;
     highlight?: boolean | "positive" | "negative";
     options?: Intl.NumberFormatOptions;
-    locale?: Intl.LocalesArgument;
+    locales?: Intl.LocalesArgument;
 }>;
 export declare function HTMLNumber(props: HTMLNumberProps): import("solid-js").JSX.Element;
 type HTMLDateProps = ExtendProps<"time", {
