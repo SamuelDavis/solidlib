@@ -22,15 +22,15 @@ export function isOf<T>(
   other: readonly T[] | Record<PropertyKey, T>,
 ): value is T {
   return Array.isArray(other)
-    ? other.includes(value as any)
-    : Object.values(other).includes(value as any);
+    ? other.includes(value as T)
+    : Object.values(other).includes(value as T);
 }
 
 export function isIn<T extends PropertyKey>(
   value: unknown,
-  other: Record<T, any>,
+  other: Record<T, unknown>,
 ): value is T {
-  return (value as any) in other;
+  return (value as T) in other;
 }
 
 export function isKeyed<K extends PropertyKey, T = unknown>(
@@ -41,7 +41,7 @@ export function isKeyed<K extends PropertyKey, T = unknown>(
 }
 
 export function isFunction<T extends (...args: any[]) => any>(
-  value: unknown | T,
+  value: unknown,
 ): value is T {
   return typeof value === "function";
 }
@@ -54,7 +54,7 @@ export function isHtml<T extends keyof HTMLElementTagNameMap>(
   );
 }
 export function isObject(value: unknown): value is object {
-  return typeof value === "object";
+  return typeof value === "object" && value !== null;
 }
 export function isString(value: unknown): value is string {
   return typeof value === "string";
@@ -68,7 +68,6 @@ export function isArray<T>(value: T): value is Extract<T, readonly unknown[]> {
 export function isNumber(value: unknown): value is number {
   return typeof value === "number" && !Number.isNaN(value);
 }
-export function isDate(value: unknown, cast: boolean = false): value is Date {
-  value = cast ? new Date(value as string) : value;
+export function isDate(value: unknown): value is Date {
   return value instanceof Date && isNumber(value.getTime());
 }
