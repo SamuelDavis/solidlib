@@ -5,51 +5,33 @@
   "homepage": "https://github.com/SamuelDavis/solidlib",
   "repository": {
     "type": "git",
-    "url": "https://github.com/solidjs/solid-router"
+    "url": "https://github.com/SamuelDavis/solidlib"
   },
   "publishConfig": {
     "access": "public"
   },
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "src/index.tsx",
+  "types": "src/index.tsx",
   "exports": {
     ".": {
-      "types": "./dist/index.ts",
-      "default": "./dist/index.js"
+      "types": "./src/index.tsx",
+      "default": "./src/index.tsx"
     }
   },
   "files": [
-    "dist"
+    "src"
   ],
   "sideEffects": false,
   "scripts": {
-    "clean": "rm -rf dist",
-    "build": "tsc && rollup -c",
-    "prepublishOnly": "npm run build",
-    "pretty": "prettier --write \"{src}/**/*.{ts,tsx}\"",
-    "validate": "npm run clean && npm run build",
-    "release": "git push --follow-tags",
-    "release:patch": "npm run validate && npm version patch && npm run release",
-    "release:minor": "npm run validate && npm version minor && npm run release",
-    "release:major": "npm run validate && npm version major && npm run release"
+    "pretty": "prettier --write \"{src}/**/*.{ts,tsx}\""
   },
   "devDependencies": {
-    "@babel/core": "^7.26.0",
-    "@babel/preset-typescript": "^7.26.0",
-    "@rollup/plugin-babel": "6.0.4",
-    "@rollup/plugin-node-resolve": "15.3.0",
-    "@types/node": "^22.10.0",
-    "jsdom": "^25.0.1",
     "prettier": "^3.4.1",
-    "rollup": "^4.27.4",
     "solid-js": "^1.9.3",
     "typescript": "^5.7.2"
   },
   "peerDependencies": {
     "solid-js": "^1.8.6"
-  },
-  "dependencies": {
-    "babel-preset-solid": "^1.9.12"
   }
 }
