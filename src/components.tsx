@@ -1,6 +1,6 @@
-import { mergeProps, onCleanup, onMount, Show, splitProps } from "solid-js";
-import { ExtendProps } from "./types";
-import { isFunction, isHtml } from "./guards";
+import { mergeProps, onMount, Show, Signal, splitProps } from "solid-js";
+import { ExtendProps, Targeted } from "./types";
+import { isArray, isFunction } from "./guards";
 import { Portal } from "solid-js/web";
 
 type HTMLNumberProps = ExtendProps<
@@ -136,38 +136,39 @@ type ModalProps<T> = ExtendProps<
   }
 >;
 
-export function Modal<T>(props: ModalProps<T>) {
-  const merged = mergeProps({ when: true, mount: document.body }, props);
-  const [local, parent] = splitProps(merged, [
-    "onClose",
-    "onClick",
-    "ref",
-    "mount",
-    "when",
-  ]);
+export function Modal(
+  props: ExtendProps<
+    "dialog",
+    { open?: boolean | Signal<boolean>; mount?: Node }
+  >,
+) {
+  const merged = mergeProps(
+    { open: false, mount: document.body, closedby: "any" as const },
+    props,
+  );
+  const [local, parent] = splitProps(merged, ["open", "mount", "onClose"]);
+  const getOpenSignal = (): Signal<boolean> => {
+    const { open } = local;
+    return isArray(open) ? open : [() => open, () => {}];
+  };
+  const [getOpen, setOpen] = getOpenSignal();
 
-  const onKeyDown = (event: KeyboardEvent) =>
-    event.key === "Escape" && local.onClose?.(event);
-  onMount(() => window.addEventListener("keydown", onKeyDown));
-  onCleanup(() => window.removeEventListener("keydown", onKeyDown));
+  let ref: undefined | HTMLDialogElement;
 
-  function onClick(event: MouseEvent) {
-    if (event.target === local.ref) local.onClose?.(event);
-    if (isFunction(local.onClick) && isHtml(local.ref, "dialog"))
-      local.onClick({
-        ...event,
-        currentTarget: local.ref,
-        target: local.ref,
-      });
+  onMount(() => {
+    if (getOpen()) ref?.showModal();
+  });
+
+  function onClose(event: Targeted<HTMLDialogElement>): void {
+    setOpen(false);
+    if (isFunction(local.onClose)) local.onClose(event);
+    else if (isFunction(local.onClose?.[0]))
+      local.onClose[0](local.onClose[1], event);
   }
 
   return (
-    <Show when={local.when}>
-      <Portal mount={local.mount}>
-        <dialog open onClick={onClick} ref={local.ref} {...parent}>
-          {props.children}
-        </dialog>
-      </Portal>
-    </Show>
+    <Portal mount={local.mount}>
+      <dialog onClose={onClose} ref={ref} {...parent} />;
+    </Portal>
   );
 }
