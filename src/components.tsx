@@ -1,6 +1,11 @@
-import { mergeProps, onMount, Show, Signal, splitProps } from "solid-js";
-import { ExtendProps, Targeted } from "./types";
-import { isArray, isFunction } from "./guards";
+import {
+  ComponentProps,
+  mergeProps,
+  onMount,
+  Show,
+  splitProps,
+} from "solid-js";
+import { ExtendProps } from "./types";
 import { Portal } from "solid-js/web";
 
 type HTMLNumberProps = ExtendProps<
@@ -127,48 +132,32 @@ export function HTMLIcon(props: HTMLIconProps) {
   );
 }
 
-type ModalProps<T> = ExtendProps<
+type ModalProps = ExtendProps<
   "dialog",
   {
-    when?: T | undefined | null | false;
-    mount?: Node;
-    onClose?: (...args: any[]) => void | any;
+    when?: ComponentProps<typeof Show>["when"];
+    mount?: ComponentProps<typeof Portal>["mount"];
   }
 >;
 
-export function Modal(
-  props: ExtendProps<
-    "dialog",
-    { open?: boolean | Signal<boolean>; mount?: Node }
-  >,
-) {
-  const merged = mergeProps(
-    { open: false, mount: document.body, closedby: "any" as const },
-    props,
-  );
-  const [local, parent] = splitProps(merged, ["open", "mount", "onClose"]);
-  const getOpenSignal = (): Signal<boolean> => {
-    const { open } = local;
-    return isArray(open) ? open : [() => open, () => {}];
-  };
-  const [getOpen, setOpen] = getOpenSignal();
+export function Modal(props: ModalProps) {
+  const merged = mergeProps({ when: true, mount: document.body }, props);
+  const [local, parent] = splitProps(merged, ["when", "mount"]);
 
-  let ref: undefined | HTMLDialogElement;
+  function ref(el: HTMLDialogElement): void {
+    onMount(() => el.showModal());
+  }
 
-  onMount(() => {
-    if (getOpen()) ref?.showModal();
-  });
-
-  function onClose(event: Targeted<HTMLDialogElement>): void {
-    setOpen(false);
-    if (isFunction(local.onClose)) local.onClose(event);
-    else if (isFunction(local.onClose?.[0]))
-      local.onClose[0](local.onClose[1], event);
+  function onClick(e: MouseEvent): void {
+    if (e.target === e.currentTarget)
+      (e.currentTarget as HTMLDialogElement).close();
   }
 
   return (
-    <Portal mount={local.mount}>
-      <dialog onClose={onClose} ref={ref} {...parent} />;
-    </Portal>
+    <Show when={local.when}>
+      <Portal mount={local.mount}>
+        <dialog ref={ref} onClick={onClick} {...parent} />
+      </Portal>
+    </Show>
   );
 }
