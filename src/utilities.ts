@@ -1,7 +1,7 @@
 import { createEffect, type Setter, type Signal } from "solid-js";
 import { assert, isFunction, isInstanceOf, isKeyed, isString } from "./guards";
-import { SetStoreFunction } from "solid-js/store";
-import { AnyRecord, KeyOfUnion } from "./types";
+import type { SetStoreFunction } from "solid-js/store";
+import type { AnyRecord, KeyOfUnion } from "./types";
 
 type Store<T> = [T, SetStoreFunction<T>];
 type PersistOpts<T> = {

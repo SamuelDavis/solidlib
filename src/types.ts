@@ -1,5 +1,5 @@
 import type { ComponentProps, ValidComponent } from "solid-js";
-import { DOMElement } from "solid-js/jsx-runtime";
+import type { DOMElement } from "solid-js/jsx-runtime";
 
 export type AnyRecord<Value = any> = Record<PropertyKey, Value>;
 export type { Signal, EffectFunction } from "solid-js";

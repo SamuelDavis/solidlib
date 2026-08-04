@@ -1,11 +1,11 @@
 import {
-  ComponentProps,
+  type ComponentProps,
   mergeProps,
   onMount,
   Show,
   splitProps,
 } from "solid-js";
-import { ExtendProps } from "./types";
+import type { ExtendProps } from "./types";
 import { Portal } from "solid-js/web";
 
 type HTMLNumberProps = ExtendProps<
