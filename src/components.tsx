@@ -107,7 +107,7 @@ type HTMLIconProps = ExtendProps<
 
 /**
  * @link https://fonts.google.com/icons
- * @example <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols" />
+ * @example <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
  */
 export function HTMLIcon(props: HTMLIconProps) {
   const merged = mergeProps(
