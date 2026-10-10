@@ -14,24 +14,8 @@ npm install github:SamuelDavis/solidlib
 npm install github:SamuelDavis/solidlib#v1.2.0
 ```
 
-This package ships TypeScript source — **your bundler compiles it.**
-
-### Vite setup (required)
-
-`vite-plugin-solid` skips `node_modules` by default. Add this to each consuming project:
-
-```ts
-// vite.config.ts
-import solidPlugin from "vite-plugin-solid";
-
-export default {
-  plugins: [
-    solidPlugin({
-      include: [/node_modules\/@samueldavis\/solidlib/, /src/],
-    }),
-  ],
-};
-```
+This package ships TypeScript source: **your bundler compiles it.**
+The default `vite-plugin-solid` setup handles this; no extra config needed:
 
 ## Architecture
 
@@ -48,5 +32,6 @@ Four modules, all exported from `src/index.tsx`:
 `HTML*` convenience wrappers around standard HTML elements.
 
 **`src/utilities.ts`** — Solid.js helpers:
+
 - `persist(signal|store, opts)` — localStorage sync with encode/decode
 - `onInput(setter, key, mutator)` — form input event handler factory
