@@ -163,7 +163,12 @@ export function HTMLIcon(props: HTMLIconProps) {
   }
 
   return (
-    <i on:keydown={onKeyDown} class={getClass()} {...parent}>
+    <i
+      data-icon={local.type}
+      on:keydown={onKeyDown}
+      class={getClass()}
+      {...parent}
+    >
       {local.type}
     </i>
   );

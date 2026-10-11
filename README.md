@@ -24,8 +24,7 @@ Every export extends native or SolidJS behavior with a minimal, intuitive, clear
 
 - Guards: `is*` naming, one type predicate, no side effects, exhaustive, preserve the input type.
 - Prefer `assert(guard, …)` over `if (!guard(…)) throw`.
-- Component props extend `ExtendProps`; use `mergeProps` + `splitProps`, never destructuring.
+- Component props extend `ExtendProps`; never destructure.
 - Internal listeners use `on:*`, so they never replace consumer `on*` handlers.
-- Derived values are `get`-prefixed, like signal getters.
 - No `@ts-expect-error`; fix the types.
 - No component tests.
