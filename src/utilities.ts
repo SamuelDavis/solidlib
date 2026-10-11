@@ -1,22 +1,39 @@
-import { createEffect, type Setter, type Signal } from "solid-js";
-import { assert, isFunction, isInstanceOf, isKeyed, isString } from "./guards";
-import type { SetStoreFunction } from "solid-js/store";
-import type { AnyRecord, KeyOfUnion } from "./types";
+import { createEffect, type Signal } from "solid-js";
+import { reconcile, type SetStoreFunction } from "solid-js/store";
+import { isFunction, isInstanceOf, isKeyed, isString } from "./guards";
+import type { AnyRecord, KeyOfUnion, Narrow } from "./types";
 
 type Store<T> = [T, SetStoreFunction<T>];
+type Reactive<T> = Signal<T> | Store<T>;
+type Accessors<T> = [get: () => T, set: (value: T) => void];
+type Update<T> = (update: (prev: T) => T) => unknown;
 type PersistOpts<T> = {
   key: string;
   encode?: (value: T) => string;
   decode?: (value: string) => T;
   onError?: (e: Error) => void;
 };
-type Mut<T> = Signal<T> | Store<T>;
-export function persist<T>(signal: Store<T>, opts: PersistOpts<T>): Store<T>;
+
+function isSignal<T>(reactive: Reactive<T>): reactive is Signal<T> {
+  return isFunction(reactive[0]);
+}
+
+function toAccessors<T>(reactive: Reactive<T>): Accessors<T> {
+  if (isSignal(reactive)) {
+    const [get, set] = reactive;
+    return [get, (value) => set(() => value)];
+  }
+  const [store, setStore] = reactive;
+  return [() => store, (value) => setStore(reconcile(value))];
+}
+
+export function persist<T>(store: Store<T>, opts: PersistOpts<T>): Store<T>;
 export function persist<T>(signal: Signal<T>, opts: PersistOpts<T>): Signal<T>;
-export function persist<T>(mut: Mut<T>, opts: PersistOpts<T>): Mut<T> {
-  const [get, set] = mut;
-  // TODO: Signal and SetStoreFunction have no overlap
-  const setter = set as unknown as (cb: () => T) => any;
+export function persist<T>(
+  reactive: Reactive<T>,
+  opts: PersistOpts<T>,
+): Reactive<T> {
+  const [get, set] = toAccessors(reactive);
   const {
     key,
     encode = JSON.stringify,
@@ -24,22 +41,28 @@ export function persist<T>(mut: Mut<T>, opts: PersistOpts<T>): Mut<T> {
     onError = console.error,
   } = opts;
 
+  function fail(message: string, cause: unknown): void {
+    onError(new Error(message, { cause }));
+  }
+
   const item = localStorage.getItem(key);
-  try {
-    if (isString(item)) setter(() => decode(item));
-  } catch (e) {
-    assert(isInstanceOf, e, Error);
-    onError(new Error(e.message, { cause: item }));
-    const value = isFunction(get) ? get() : get;
-    localStorage.setItem(key, encode(value));
+  if (isString(item)) {
+    try {
+      set(decode(item));
+    } catch (e) {
+      fail(`Failed to restore "${key}" from ${item}`, e);
+    }
   }
 
   createEffect(() => {
-    const value = isFunction(get) ? get() : get;
-    return localStorage.setItem(key, encode(value));
+    try {
+      localStorage.setItem(key, encode(get()));
+    } catch (e) {
+      fail(`Failed to persist "${key}"`, e);
+    }
   });
 
-  return mut;
+  return reactive;
 }
 
 export function onInput<
@@ -47,15 +70,12 @@ export function onInput<
   K extends keyof T,
   E extends { currentTarget: { value: string } },
 >(
-  set: Setter<T> | SetStoreFunction<T>,
+  set: Update<T>,
   key: K,
-  mut: (value: E["currentTarget"]["value"], event: E) => T[K],
+  parse: (value: E["currentTarget"]["value"], event: E) => T[K],
 ): (event: E) => void {
   return (event: E): void => {
-    const value = mut(event.currentTarget.value, event);
-    // @ts-expect-error
-    // Each member of the union type 'Setter<T> | SetStoreFunction<T>' has signatures,
-    // but none of those signatures are compatible with each other. [2349]
+    const value = parse(event.currentTarget.value, event);
     set((prev) => ({ ...prev, [key]: value }));
   };
 }
@@ -78,6 +98,6 @@ export function preventDefault<E extends Event>(
 export function extract<T, K extends PropertyKey & KeyOfUnion<T>>(
   value: T,
   key: K,
-): undefined | Extract<T, Record<K, unknown>> {
+): undefined | Narrow<T, Record<K, unknown>> {
   return isKeyed(value, key) ? value : undefined;
 }

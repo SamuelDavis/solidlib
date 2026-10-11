@@ -1,9 +1,11 @@
+import type { Narrow } from "./types";
+
 export function assert<T, Args extends any[]>(
   guard: (value: unknown, ...args: Args) => value is T,
   value: unknown,
   ...args: Args
 ): asserts value is T {
-  if (!guard(value, ...args)) throw new TypeError();
+  if (!guard(value, ...args)) throw new TypeError(guard.name);
 }
 
 export function isNonNullable<T>(value: T): value is NonNullable<T> {
@@ -36,13 +38,13 @@ export function isIn<T extends PropertyKey>(
 export function isKeyed<K extends PropertyKey, T = unknown>(
   value: T,
   key: K,
-): value is Extract<T, Record<K, unknown>> {
+): value is Narrow<T, Record<K, unknown>> {
   return isObject(value) && isIn(key, value);
 }
 
-export function isFunction<T extends (...args: any[]) => any>(
-  value: unknown,
-): value is T {
+export function isFunction<T>(
+  value: T,
+): value is Narrow<T, (...args: any[]) => any> {
   return typeof value === "function";
 }
 export function isHtml<T extends keyof HTMLElementTagNameMap>(

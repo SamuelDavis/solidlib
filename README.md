@@ -1,37 +1,31 @@
 # solidlib
 
-SolidJS utilities: types, runtime guards, HTML component wrappers, and helpers.
-
-## Design
-
-Personal project for SolidJS SPAs — common patterns: types, component wrappers, utilities.
+Personal SolidJS toolkit shared across my SPAs.
 
 ## Installation
 
 ```shell
 npm install github:SamuelDavis/solidlib
-# or a specific tag
-npm install github:SamuelDavis/solidlib#v1.2.0
 ```
 
-This package ships TypeScript source: **your bundler compiles it.**
-The default `vite-plugin-solid` setup handles this; no extra config needed:
+Ships TypeScript source; the consumer's bundler compiles it.
 
-## Architecture
+## Intent
 
-Four modules, all exported from `src/index.tsx`:
+Every export extends native or SolidJS behavior with a minimal, intuitive, clearly typed layer.
 
-**`src/types.ts`** — Generic type helpers
+- **Enhance, don't reinvent.** Wrappers add semantics to the element they render; they never swap it for another.
+- **Convenience without capture.** Recurring patterns fold into one tag, but consumer attributes, handlers, refs, and state pass through untouched.
+- **Defaults, not overrides.** Anything the library sets, the consumer can replace.
+- **Style hooks via `data-*`**, not classes. Third-party class contracts are matched exactly.
+- **PicoCSS-compatible** semantics.
 
-**`src/guards.ts`** — Runtime type guards with TS narrowing.
+## Conventions
 
-`is<T>(value: any, ...context: unknown[]): value is T;`
-
-**`src/components.tsx`** — Solid.js components.
-
-`HTML*` convenience wrappers around standard HTML elements.
-
-**`src/utilities.ts`** — Solid.js helpers:
-
-- `persist(signal|store, opts)` — localStorage sync with encode/decode
-- `onInput(setter, key, mutator)` — form input event handler factory
+- Guards: `is*` naming, one type predicate, no side effects, exhaustive, preserve the input type.
+- Prefer `assert(guard, …)` over `if (!guard(…)) throw`.
+- Component props extend `ExtendProps`; use `mergeProps` + `splitProps`, never destructuring.
+- Internal listeners use `on:*`, so they never replace consumer `on*` handlers.
+- Derived values are `get`-prefixed, like signal getters.
+- No `@ts-expect-error`; fix the types.
+- No component tests.

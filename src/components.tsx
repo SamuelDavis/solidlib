@@ -1,12 +1,19 @@
 import {
+  type Accessor,
   type ComponentProps,
+  type JSX,
   mergeProps,
   onMount,
   Show,
   splitProps,
 } from "solid-js";
-import type { ExtendProps } from "./types";
 import { Portal } from "solid-js/web";
+import { isDate, isFunction, isOf } from "./guards";
+import type { ExtendProps, Targeted } from "./types";
+
+const BUTTON_KEYS = ["Enter", " "] as const;
+
+type Sign = "positive" | "negative";
 
 type HTMLNumberProps = ExtendProps<
   "span",
@@ -14,7 +21,7 @@ type HTMLNumberProps = ExtendProps<
     value: number;
     money?: boolean;
     precision?: number;
-    highlight?: boolean | "positive" | "negative";
+    highlight?: boolean | Sign;
     options?: Intl.NumberFormatOptions;
     locales?: Intl.LocalesArgument;
   }
@@ -26,13 +33,12 @@ export function HTMLNumber(props: HTMLNumberProps) {
       highlight: false,
       money: false,
       precision: 2,
-      fill: true,
-      options: {},
-      locales: "en-US",
+      options: {} as Intl.NumberFormatOptions,
     },
     props,
   );
   const [local, parent] = splitProps(merged, [
+    "value",
     "highlight",
     "money",
     "precision",
@@ -40,29 +46,31 @@ export function HTMLNumber(props: HTMLNumberProps) {
     "locales",
   ]);
   const getNumberFormatOptions = (): Intl.NumberFormatOptions => ({
-    minimumFractionDigits: local.precision,
-    maximumFractionDigits: local.precision,
+    minimumFractionDigits: Math.min(
+      local.precision,
+      local.options.maximumFractionDigits ?? local.precision,
+    ),
+    maximumFractionDigits: Math.max(
+      local.precision,
+      local.options.minimumFractionDigits ?? local.precision,
+    ),
     ...local.options,
   });
   const getText = () =>
-    merged.value.toLocaleString(local.locales, getNumberFormatOptions());
-
-  const getIsPositive = (): undefined | true => {
-    if (merged.highlight === "positive") return true;
-    if (merged.highlight === true && merged.value > 0) return true;
+    local.value.toLocaleString(local.locales, getNumberFormatOptions());
+  const getValueSign = (): Sign | undefined => {
+    if (local.value > 0) return "positive";
+    if (local.value < 0) return "negative";
     return undefined;
   };
-  const getIsNegative = (): undefined | true => {
-    if (merged.highlight === "negative") return true;
-    if (merged.highlight === true && merged.value < 0) return true;
-    return undefined;
-  };
+  const getSign = (): Sign | undefined =>
+    local.highlight === true ? getValueSign() : local.highlight || undefined;
 
   return (
     <span
-      data-money={merged.money || undefined}
-      data-positive={getIsPositive()}
-      data-negative={getIsNegative()}
+      data-money={local.money || undefined}
+      data-positive={getSign() === "positive" || undefined}
+      data-negative={getSign() === "negative" || undefined}
       {...parent}
     >
       {getText()}
@@ -81,83 +89,119 @@ type HTMLDateProps = ExtendProps<
 >;
 
 export function HTMLDate(props: HTMLDateProps) {
-  const merged = mergeProps({ options: {}, locales: "en-US" }, props);
+  const merged = mergeProps({ options: {} }, props);
   const [local, parent] = splitProps(merged, [
     "children",
     "value",
     "options",
     "locales",
   ]);
+  const getDateTime = () =>
+    isDate(local.value) ? local.value.toISOString() : undefined;
+  const getText = () =>
+    local.children ??
+    local.value.toLocaleDateString(local.locales, local.options);
+
   return (
-    <time datetime={local.value.toISOString()} {...parent}>
-      <Show
-        when={local.children}
-        fallback={local.value.toLocaleDateString(local.locales, local.options)}
-      >
-        {(children) => children()}
-      </Show>
+    <time datetime={getDateTime()} {...parent}>
+      {getText()}
     </time>
   );
 }
 
-type HTMLIconProps = ExtendProps<
-  "i",
-  { type: string; variant?: "icon" | "symbol" }
->;
+type MaterialFont =
+  | "icons"
+  | "icons-outlined"
+  | "icons-round"
+  | "icons-sharp"
+  | "icons-two-tone"
+  | "symbols-outlined"
+  | "symbols-rounded"
+  | "symbols-sharp";
+
+type HTMLIconProps = ExtendProps<"i", { type: string; variant?: MaterialFont }>;
 
 /**
+ * Load the stylesheet matching `variant`.
+ * Symbols: `Material+Symbols+{Outlined|Rounded|Sharp}`.
+ * Icons: `Material+Icons[+{Outlined|Round|Sharp|Two+Tone}]`.
  * @link https://fonts.google.com/icons
  * @example <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+ * @example <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
  */
 export function HTMLIcon(props: HTMLIconProps) {
+  const getIsClickable = () => Boolean(props.onClick);
   const merged = mergeProps(
     {
-      role: props.onClick ? ("button" as const) : undefined,
-      title: props.type,
-      variant: "symbol",
+      variant: "symbols-outlined" as const,
       class: "",
-      classList: {},
+      get title() {
+        return props.type;
+      },
+      get role() {
+        return getIsClickable() ? ("button" as const) : undefined;
+      },
+      get tabIndex() {
+        return getIsClickable() ? 0 : undefined;
+      },
+      get "aria-label"() {
+        return getIsClickable() ? props.type : undefined;
+      },
+      get "aria-hidden"() {
+        return getIsClickable() ? undefined : ("true" as const);
+      },
     },
     props,
   );
   const [local, parent] = splitProps(merged, ["type", "variant", "class"]);
-  const getVariantClass = () => `material-${local.variant}s`;
-  const getClass = (): NonNullable<HTMLIconProps["class"]> =>
-    `${getVariantClass()} ${local.class}`.trimEnd();
+  const getClass = () => `material-${local.variant} ${local.class}`.trimEnd();
+
+  function onKeyDown(event: Targeted<HTMLElement, KeyboardEvent>): void {
+    if (!getIsClickable() || !isOf(event.key, BUTTON_KEYS)) return;
+    event.preventDefault();
+    event.currentTarget.click();
+  }
 
   return (
-    <i class={getClass()} {...parent}>
+    <i on:keydown={onKeyDown} class={getClass()} {...parent}>
       {local.type}
     </i>
   );
 }
 
-type ModalProps = ExtendProps<
+type HTMLDialogProps<T> = ExtendProps<
   "dialog",
   {
-    when?: ComponentProps<typeof Show>["when"];
+    open?: T | undefined | null | false;
     mount?: ComponentProps<typeof Portal>["mount"];
+    children?: JSX.Element | ((item: Accessor<NonNullable<T>>) => JSX.Element);
   }
 >;
 
-export function Modal(props: ModalProps) {
-  const merged = mergeProps({ when: true, mount: document.body }, props);
-  const [local, parent] = splitProps(merged, ["when", "mount"]);
+export function HTMLDialog<T>(props: HTMLDialogProps<T>) {
+  const [local, parent] = splitProps(props, ["open", "mount", "children"]);
+
+  function getChildren(item: Accessor<NonNullable<T>>): JSX.Element {
+    return isFunction(local.children) ? local.children(item) : local.children;
+  }
 
   function ref(el: HTMLDialogElement): void {
     onMount(() => el.showModal());
   }
 
-  function onClick(e: MouseEvent): void {
-    if (e.target === e.currentTarget)
-      (e.currentTarget as HTMLDialogElement).close();
+  function onClick(event: Targeted<HTMLDialogElement, MouseEvent>): void {
+    if (event.target === event.currentTarget) event.currentTarget.close();
   }
 
   return (
-    <Show when={local.when}>
-      <Portal mount={local.mount}>
-        <dialog ref={ref} onClick={onClick} {...parent} />
-      </Portal>
+    <Show when={local.open}>
+      {(item) => (
+        <Portal mount={local.mount}>
+          <dialog ref={ref} on:click={onClick} {...parent}>
+            {getChildren(item)}
+          </dialog>
+        </Portal>
+      )}
     </Show>
   );
 }
