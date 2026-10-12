@@ -8,7 +8,7 @@ Personal SolidJS toolkit shared across my SPAs.
 npm install github:SamuelDavis/solidlib
 ```
 
-Ships TypeScript source; the consumer's bundler compiles it.
+Ships TypeScript source under the `solid` export condition, so `vite-plugin-solid` compiles it rather than pre-bundling it.
 
 ## Intent
 
